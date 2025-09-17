@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>깔끔한 계산기</title>
+<style>
+    body {
+        background: #f7f9fc;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        font-family: 'Arial', sans-serif;
+    }
+    .calculator {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        width: 320px;
+    }
+    #display {
+        width: 100%;
+        height: 60px;
+        font-size: 2.5em;
+        text-align: right;
+        padding: 10px 15px;
+        margin-bottom: 25px;
+        border: 2px solid #ddd;
+        border-radius: 12px;
+        background-color: #fafafa;
+        color: black;
+        user-select: none;
+    }
+    .buttons {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+    }
+    button.btn {
+        font-size: 1.8em;
+        padding: 20px 0;
+        border-radius: 15px;
+        border: none;
+        cursor: pointer;
+        font-weight: 700;
+        user-select: none;
+        transition: background-color 0.25s ease;
+        color: white;
+    }
+    button.btn.number {
+        color: #0a8f08; /* 초록색 텍스트 */
+    }
+    button.btn.number:nth-child(4n-3) { background-color: #A8D5BA; }
+    button.btn.number:nth-child(4n-2) { background-color: #7CB87C; }
+    button.btn.number:nth-child(4n-1) { background-color: #4B7A4F; }
+    button.btn.number:nth-child(4n) { background-color: #2E5939; }
+
+    button.btn.operator {
+        background-color: #ff7f50;
+        color: white;
+    }
+    button.btn.operator:hover {
+        background-color: #e76e40;
+    }
+    button.btn.number:hover {
+        filter: brightness(0.85);
+    }
+</style>
+</head>
+<body>
+
+<div class="calculator">
+    <input type="text" id="display" disabled />
+    <div class="buttons" id="buttons-container">
+        <!-- 버튼은 JS로 넣습니다 -->
+    </div>
+</div>
+
+<script>
+    const buttons = [
+        {text: '1', type:'number'},
+        {text: '2', type:'number'},
+        {text: '3', type:'number'},
+        {text: '+', type:'operator'},
+
+        {text: '4', type:'number'},
+        {text: '5', type:'number'},
+        {text: '6', type:'number'},
+        {text: '-', type:'operator'},
+
+        {text: '7', type:'number'},
+        {text: '8', type:'number'},
+        {text: '9', type:'number'},
+        {text: '*', type:'operator'},
+
+        {text: '0', type:'number'},
+        {text: 'C', type:'operator'},
+        {text: '=', type:'operator'},
+        {text: '/', type:'operator'},
+    ];
+
+    const display = document.getElementById('display');
+    const buttonsContainer = document.getElementById('buttons-container');
+
+    buttons.forEach(btn => {
+        const button = document.createElement('button');
+        button.classList.add('btn');
+        button.classList.add(btn.type);
+        button.textContent = btn.text;
+
+        button.addEventListener('click', () => {
+            if (btn.text === 'C') {
+                display.value = '';
+            } else if (btn.text === '=') {
+                try {
+                    display.value = eval(display.value);
+                } catch {
+                    display.value = 'Error';
+                }
+            } else {
+                display.value += btn.text;
+            }
+        });
+
+        buttonsContainer.appendChild(button);
+    });
+</script>
+
+</body>
+</html>
