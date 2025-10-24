@@ -1,51 +1,61 @@
 body {
-  background-color: #222;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-family: Arial, sans-serif;
-  height: 100vh;
-  margin: 0;
-  color: white;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
-.game-container {
-  position: relative;
-  width: 400px;
-  height: 600px;
-  background-color: #0a0a0a;
-  border: 2px solid #fff;
-  margin-top: 20px;
-  overflow: hidden;
-  border-radius: 10px;
+#gameArea {
+    text-align: center;
+    position: relative;
 }
 
-.paddle {
-  position: absolute;
-  width: 80px;
-  height: 15px;
-  background-color: #ff4500;
-  bottom: 20px; /* player1 기본 위치 */
-  left: 160px;
-  border-radius: 5px;
+#timer {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 20px;
+    font-weight: bold;
 }
 
-#player2 {
-  top: 20px;
-  background-color: #1e90ff;
+.board {
+    display: grid;
+    grid-template-columns: repeat(4, 100px);
+    grid-gap: 10px;
+    margin-top: 50px;
 }
 
-#puck {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  background-color: #ffff00;
-  border-radius: 50%;
-  top: 290px;
-  left: 190px;
+.card {
+    width: 100px;
+    height: 100px;
+    background-color: #ddd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    cursor: pointer;
 }
 
-#scoreboard {
-  margin-top: 10px;
-  font-size: 24px;
+button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+button:hover {
+    background-color: #0056b3;
 }
