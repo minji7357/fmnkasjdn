@@ -1,95 +1,85 @@
-const paddle = document.getElementById('player1');
-const paddle2 = document.getElementById('player2');
-const puck = document.getElementById('puck');
-const score1El = document.getElementById('score1');
-const score2El = document.getElementById('score2');
+let startButton = document.getElementById("startButton");
+let timerDisplay = document.getElementById("timer");
+let board = document.getElementById("board");
 
-let score1 = 0;
-let score2 = 0;
+let cards = [];
+let flippedCards = [];
+let matchedCards = [];
+let timer = 0;
+let gameStarted = false;
+let interval;
 
-const gameWidth = 400;
-const gameHeight = 600;
-const paddleWidth = 80;
-const paddleHeight = 15;
-const puckSize = 20;
+startButton.addEventListener("click", startGame);
 
-let paddleX = 160;
-let paddle2X = 160;
-const paddleSpeed = 5;
-
-// 키 상태 저장
-let keys = {
-    ArrowLeft: false,
-    ArrowRight: false
-};
-
-// 키 이벤트
-document.addEventListener('keydown', e => {
-    if(keys.hasOwnProperty(e.key)) keys[e.key] = true;
-});
-document.addEventListener('keyup', e => {
-    if(keys.hasOwnProperty(e.key)) keys[e.key] = false;
-});
-
-// puck 초기 위치
-let puckX = 190;
-let puckY = 290;
-let velocityX = 3;
-let velocityY = 3;
-
-// 게임 루프
-function gameLoop() {
-    // 플레이어 이동
-    if(keys.ArrowLeft) paddleX -= paddleSpeed;
-    if(keys.ArrowRight) paddleX += paddleSpeed;
-    paddleX = Math.max(0, Math.min(gameWidth - paddleWidth, paddleX));
-    paddle.style.left = paddleX + 'px';
-
-    // 컴퓨터 이동 (AI)
-    if(paddle2X + paddleWidth/2 < puckX + puckSize/2) paddle2X += 3;
-    if(paddle2X + paddleWidth/2 > puckX + puckSize/2) paddle2X -= 3;
-    paddle2X = Math.max(0, Math.min(gameWidth - paddleWidth, paddle2X));
-    paddle2.style.left = paddle2X + 'px';
-
-    // puck 이동
-    puckX += velocityX;
-    puckY += velocityY;
-
-    // 벽 충돌
-    if(puckX <= 0 || puckX >= gameWidth - puckSize) velocityX *= -1;
-
-    // 상하 점수
-    if(puckY <= 0) {
-        score1++;
-        resetPuck();
-    }
-    if(puckY >= gameHeight - puckSize) {
-        score2++;
-        resetPuck();
-    }
-
-    // 패들 충돌
-    if(puckY + puckSize >= gameHeight - 20 && puckX + puckSize >= paddleX && puckX <= paddleX + paddleWidth) {
-        velocityY *= -1;
-        puckY = gameHeight - 20 - puckSize;
-    }
-    if(puckY <= 20 + paddleHeight && puckX + puckSize >= paddle2X && puckX <= paddle2X + paddleWidth) {
-        velocityY *= -1;
-        puckY = 20 + paddleHeight;
-    }
-
-    puck.style.left = puckX + 'px';
-    puck.style.top = puckY + 'px';
-
-    requestAnimationFrame(gameLoop);
+// 카드 배열 설정
+function generateCards() {
+    const cardValues = ["A", "B", "C", "D", "E", "F", "G", "H"];
+    const cardDeck = [...cardValues, ...cardValues]; // 각 카드 두 개씩 추가
+    cards = shuffle(cardDeck);
 }
 
-function resetPuck() {
-    puckX = 190;
-    puckY = 290;
-    velocityY = -velocityY;
-    score1El.textContent = score1;
-    score2El.textContent = score2;
+// 카드 섞기
+function shuffle(arr) {
+    return arr.sort(() => Math.random() - 0.5);
 }
 
-gameLoop();
+// 카드 생성
+function createBoard() {
+    board.innerHTML = ""; // 기존 카드들 삭제
+    for (let i = 0; i < cards.length; i++) {
+        const card = document.createElement("div");
+        card.classList.add("card");
+        card.dataset.value = cards[i];
+        card.addEventListener("click", flipCard);
+        board.appendChild(card);
+    }
+}
+
+// 카드 뒤집기
+function flipCard(e) {
+    if (flippedCards.length < 2 && !matchedCards.includes(e.target) && !flippedCards.includes(e.target)) {
+        e.target.textContent = e.target.dataset.value;
+        flippedCards.push(e.target);
+        
+        if (flippedCards.length === 2) {
+            checkMatch();
+        }
+    }
+}
+
+// 카드 매칭 확인
+function checkMatch() {
+    if (flippedCards[0].dataset.value === flippedCards[1].dataset.value) {
+        matchedCards.push(flippedCards[0], flippedCards[1]);
+        flippedCards = [];
+        if (matchedCards.length === cards.length) {
+            clearInterval(interval);
+            alert("게임 성공! " + timer + "초 만에 맞췄습니다!");
+        }
+    } else {
+        setTimeout(() => {
+            flippedCards[0].textContent = "";
+            flippedCards[1].textContent = "";
+            flippedCards = [];
+        }, 1000);
+    }
+}
+
+// 게임 시작
+function startGame() {
+    if (gameStarted) return;
+    gameStarted = true;
+    startButton.disabled = true;
+    generateCards();
+    createBoard();
+    startTimer();
+}
+
+// 타이머 시작
+function startTimer() {
+    timer = 0;
+    interval = setInterval(() => {
+        timer++;
+        timerDisplay.textContent = "초: " + timer;
+    }, 1000);
+}
